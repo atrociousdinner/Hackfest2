@@ -3,6 +3,9 @@ import Sidebar from './components/Sidebar';
 import SearchResults from './components/SearchResults';
 import { busRoutes } from './data/busRoutes';
 import BottomFeatures from './components/BottomFeatures';
+import BusRouteMap from './components/BusRouteMap';
+import { MainContextProvider } from "./context/primaryContext";
+
 
 const App = () => {
   const [searchParams, setSearchParams] = useState({ from: '', to: '' });
@@ -21,6 +24,7 @@ const App = () => {
   );
 
   return (
+    <>
     <div className="relative min-h-screen">
       <div className="flex bg-gray-100 pb-24"> {/* Added pb-24 for bottom spacing */}
         <Sidebar
@@ -38,8 +42,12 @@ const App = () => {
           )}
         </div>
       </div>
+      <MainContextProvider>
+        <BusRouteMap />
+      </MainContextProvider>
       {showResults && <BottomFeatures />}
     </div>
+    </>
   );
 };
 
