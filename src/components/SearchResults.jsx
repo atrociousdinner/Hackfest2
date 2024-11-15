@@ -1,4 +1,4 @@
-import Sidebar from './layout/Sidebar';
+import Sidebar from './Sidebar';
 
 const SearchResults = ({ routes, searchParams }) => {
   return (

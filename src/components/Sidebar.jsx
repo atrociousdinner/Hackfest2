@@ -1,12 +1,25 @@
 import { useState } from 'react';
+import BusInfoPanel from './BusInfoPanel';
 
-export default function App() {
+const Sidebar = () => {  // Changed to arrow function for consistency
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [searchCriteria, setSearchCriteria] = useState({ from: '', to: '' });
   const [hasSearched, setHasSearched] = useState(false);
+  const [selectedRoute, setSelectedRoute] = useState(null);
 
-  // Sample bus data - replace with your actual data
+  const handleRouteClick = (route) => {
+    setSelectedRoute(route);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSearchCriteria({ from, to });
+    setHasSearched(true);
+    setSelectedRoute(null);
+  };
+
+  // Sample bus data
   const busRoutes = [
     {
       id: '1',
@@ -42,12 +55,6 @@ export default function App() {
       facilities: ['Water']
     }
   ];
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setSearchCriteria({ from, to });
-    setHasSearched(true);
-  };
 
   const filteredRoutes = busRoutes.filter(
     route => 
@@ -95,12 +102,18 @@ export default function App() {
           </button>
         </form>
 
-        {/* Route Cards - Only show if search has been performed */}
+        {/* Route Cards */}
         {hasSearched && (
           <div className="space-y-4">
             {filteredRoutes.length > 0 ? (
               filteredRoutes.map(route => (
-                <div key={route.id} className="bg-white rounded-lg shadow-md p-4">
+                <div 
+                  key={route.id} 
+                  className={`bg-white rounded-lg shadow-md p-4 cursor-pointer transition duration-200 ${
+                    selectedRoute?.id === route.id ? 'ring-2 ring-blue-500' : 'hover:shadow-lg'
+                  }`}
+                  onClick={() => handleRouteClick(route)}
+                >
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <h3 className="text-lg font-bold text-gray-800">{route.provider}</h3>
@@ -148,6 +161,11 @@ export default function App() {
       <div className="flex-1 p-8">
         {/* Your main content goes here */}
       </div>
+
+      {/* Bus Info Panel */}
+      <BusInfoPanel selectedRoute={selectedRoute} />
     </div>
   );
-}
+};
+
+export default Sidebar;

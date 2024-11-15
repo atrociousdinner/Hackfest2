@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Sidebar from './components/layout/Sidebar';
+import Sidebar from './components/Sidebar';
 import SearchResults from './components/SearchResults';
 import { busRoutes } from './data/busRoutes';
 import BottomFeatures from './components/BottomFeatures';
