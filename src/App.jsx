@@ -32,19 +32,20 @@ const App = () => {
           searchParams={searchParams}
           setSearchParams={setSearchParams}
         />
+              <MainContextProvider>
+        <BusRouteMap />
+      </MainContextProvider>
 
         <div className="flex-1 p-8">
           {showResults && (
             <SearchResults 
               routes={filteredRoutes} 
               searchParams={searchParams}
+              
             />
           )}
         </div>
       </div>
-      <MainContextProvider>
-        <BusRouteMap />
-      </MainContextProvider>
       {showResults && <BottomFeatures />}
     </div>
     </>
