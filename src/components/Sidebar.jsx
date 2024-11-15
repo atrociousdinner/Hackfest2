@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import BusInfoPanel from './BusInfoPanel';
+import { useNavigate } from 'react-router-dom'; // Add this import
+
 
 const Sidebar = () => {  // Changed to arrow function for consistency
   const [from, setFrom] = useState('');
@@ -7,6 +9,8 @@ const Sidebar = () => {  // Changed to arrow function for consistency
   const [searchCriteria, setSearchCriteria] = useState({ from: '', to: '' });
   const [hasSearched, setHasSearched] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
+  const navigate = useNavigate(); // Add this
+
 
   const handleRouteClick = (route) => {
     setSelectedRoute(route);

@@ -1,7 +1,17 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // Add this import
 
 const BusInfoPanel = ({ selectedRoute }) => {
+  const navigate = useNavigate(); // Add this hook
+
   if (!selectedRoute) return null;
+
+  // Add this handler function
+  const handleContributeClick = () => {
+    navigate('/contribute', { 
+      state: { selectedRoute } // Pass the selectedRoute as state
+    });
+  };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-6">
@@ -40,11 +50,11 @@ const BusInfoPanel = ({ selectedRoute }) => {
             </div>
           </div>
 
-          {/* Contribute Button */}
+          {/* Contribute Button - Updated with onClick handler */}
           <div className="flex-1 flex justify-end">
             <button
               className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200"
-              onClick={() => {/* Handle contribute click */}}
+              onClick={handleContributeClick} // Add the click handler here
             >
               Contribute Information
             </button>
