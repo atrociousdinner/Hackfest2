@@ -2,7 +2,6 @@ import { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import SearchResults from './components/SearchResults';
 import { busRoutes } from './data/busRoutes';
-import BottomFeatures from './components/BottomFeatures';
 import BusRouteMap from './components/BusRouteMap';
 import { MainContextProvider } from "./context/primaryContext";
 
