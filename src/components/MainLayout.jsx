@@ -1,57 +1,82 @@
-import React from 'react'
-import { useState } from 'react';
-import {useLocation } from 'react-router-dom';
+// MainLayout.jsx
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { busRoutes } from '../data/busRoutes';
 import SearchResults from '../components/SearchResults';
 import BusRouteMap from '../components/BusRouteMap';
 import { MainContextProvider } from '../context/primaryContext';
+import BusInfoPanel from './BusInfoPanel';
+
 const MainLayout = () => {
-    const [searchParams, setSearchParams] = useState({ from: '', to: '' });
-    const [showResults, setShowResults] = useState(false);
-    const handleSearch = (params) => {
-        console.log('Search parameters:', params);
-        setSearchParams(params);
-        setShowResults(true);
-      };
-    
-      const filteredRoutes = busRoutes.filter(
-        (route) =>
-          route.from.toLowerCase().includes(searchParams.from.toLowerCase()) &&
-          route.to.toLowerCase().includes(searchParams.to.toLowerCase())
-      );
-    const location = useLocation();
+  const [searchParams, setSearchParams] = useState({ from: '', to: '' });
+  const [showResults, setShowResults] = useState(false);
+  const [selectedRoute, setSelectedRoute] = useState(null);
 
-    // Maintain `showResults` state when returning from the contribute page
-    React.useEffect(() => {
-      if (location.state?.fromContribute) {
-        setShowResults(true);
-      }
-    }, [location]);
+  const handleSearch = (params) => {
+    console.log('Search parameters:', params);
+    setSearchParams(params);
+    setShowResults(true);
+  };
+
+  const handleRouteSelect = (route) => {
+    setSelectedRoute(route);
+  };
+
+  const filteredRoutes = busRoutes.filter(
+    (route) =>
+      route.from.toLowerCase().includes(searchParams.from.toLowerCase()) &&
+      route.to.toLowerCase().includes(searchParams.to.toLowerCase())
+  );
+
+  const location = useLocation();
+
+  // Maintain `showResults` state when returning from the contribute page
+  useEffect(() => {
+    if (location.state?.fromContribute) {
+      setShowResults(true);
+    }
+  }, [location]);
+
   return (
-    <div>
-      <div className="relative min-h-screen">
-        <div className="flex bg-gray-100 pb-24">
-          <Sidebar
-            onSearch={handleSearch}
-            searchParams={searchParams}
-            setSearchParams={setSearchParams}
-          />
-          <MainContextProvider>
-            <BusRouteMap />
-          </MainContextProvider>
-          <div className="flex-1 p-8">
-            {showResults && (
-              <SearchResults routes={filteredRoutes} searchParams={searchParams} />
-            )}
-          </div>
-        </div>
-        {showResults && <BottomFeatures />}
+    <div className="relative flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className="flex-none w-80 bg-white shadow-lg overflow-y-auto h-screen">
+        <Sidebar
+          onSearch={handleSearch}
+          searchParams={searchParams}
+          setSearchParams={setSearchParams}
+          handleRouteSelect={handleRouteSelect}
+        />
       </div>
-    </div>
-  )
-}
 
+      {/* Main content */}
+      <div className="flex-1 flex flex-col relative">
+        <MainContextProvider>
+          <div className="flex-1 p-4">
+            <BusRouteMap />
+          </div>
+        </MainContextProvider>
+
+        {showResults && (
+          <div className="absolute top-0 right-0 w-80 bg-gray-50 h-screen shadow-lg overflow-y-auto">
+            <SearchResults
+              routes={filteredRoutes}
+              searchParams={searchParams}
+              onRouteSelect={handleRouteSelect}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Bus Info Panel */}
+      {selectedRoute && (
+        <div className="absolute left-[320px] bottom-0 w-80 bg-white shadow-lg border-t border-gray-200">
+          <BusInfoPanel selectedRoute={selectedRoute} />
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default MainLayout;
-
