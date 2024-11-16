@@ -160,7 +160,7 @@ const ContributePage = ({ searchParams, showResults }) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Crowdness
             </label>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 justify-evenly">
               <CrowdIndicator
                 level="Low"
                 selected={formData.crowdness === 'low'}
