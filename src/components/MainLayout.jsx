@@ -46,7 +46,6 @@ const MainLayout = () => {
             )}
           </div>
         </div>
-        {showResults && <BottomFeatures />}
       </div>
     </div>
   )
