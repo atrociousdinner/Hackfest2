@@ -6,6 +6,7 @@ import { busRoutes } from '../data/busRoutes';
 import SearchResults from '../components/SearchResults';
 import BusRouteMap from '../components/BusRouteMap';
 import { MainContextProvider } from '../context/primaryContext';
+import BusRouteFinder from './BusRouteFinder';
 import BusInfoPanel from './BusInfoPanel';
 
 const MainLayout = () => {
@@ -50,12 +51,11 @@ const MainLayout = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col relative">
-        <MainContextProvider>
+        
           <div className="flex-1 ">
-            <BusRouteMap />
+            <BusRouteFinder />
           </div>
-        </MainContextProvider>
-
+        
         {showResults && (
           <div className="absolute top-0 right-0 w-80 bg-gray-50 h-screen shadow-lg overflow-y-auto">
             <SearchResults

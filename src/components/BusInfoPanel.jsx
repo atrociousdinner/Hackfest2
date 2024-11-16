@@ -1,31 +1,59 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Add this import
+import React from "react";
+import { useNavigate } from "react-router-dom"; // Add this import
+import busRoutes from "../assets/data/busRoutes";
 
 const BusInfoPanel = ({ selectedRoute }) => {
   const navigate = useNavigate(); // Add this hook
-
+  console.log(selectedRoute);
   if (!selectedRoute) return null;
 
   return (
-    <div className="fixed bottom-0 z-10 left-[321px] right-0 bg-white shadow-lg border-t border-gray-200 p-6">
+    <div className="fixed bottom-0 z-100 left-[321px] right-0 bg-white shadow-lg border-t border-gray-200 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center gap-8">
-          {/* Crowdness Section */}
-          <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-2">Crowdness</h3>
-            <div className="flex items-center gap-2">
-              <div className="h-2 bg-gray-200 rounded-full flex-1">
-                <div 
-                  className="h-full bg-green-500 rounded-full" 
-                  style={{ width: '30%' }}
-                />
-              </div>
-              <span className="text-sm text-gray-600">30% Full</span>
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Bus Name: </h3>
+            <div className="text-sm text-gray-600">
+              {selectedRoute.provider}
             </div>
           </div>
 
+          {/* Crowdness Section */}
+          <div className="flex-shrink flex flex-col">
+            <h3 className="text-lg font-semibold mb-2">Crowdness</h3>
+            <div className="flex items-center gap-2">
+              <div className="h-2 bg-gray-200 rounded-full flex-1">
+                <div
+                  className={`h-full rounded-full ${
+                    selectedRoute.crowdness === "Low"
+                      ? "bg-green-500"
+                      : selectedRoute.crowdness === "Medium"
+                      ? "bg-yellow-500"
+                      : "bg-red-500"
+                  }`}
+                  style={{
+                    width:
+                      selectedRoute.crowdness === "Low"
+                        ? "30%"
+                        : selectedRoute.crowdness === "Medium"
+                        ? "60%"
+                        : "100%",
+                  }}
+                />
+              </div>
+              <div className="text-sm text-gray-600">
+                {selectedRoute.crowdness}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold mb-2">Travel Time: </h3>
+            <span> {selectedRoute.duration} </span>
+          </div>
+
           {/* Fare Section */}
-          <div className="flex-1">
+          <div className="flex-shrink">
             <h3 className="text-lg font-semibold mb-2">Fare</h3>
             <div className="space-y-2">
               <div className="flex justify-between">
@@ -38,7 +66,9 @@ const BusInfoPanel = ({ selectedRoute }) => {
               </div>
               <div className="flex justify-between text-lg font-bold">
                 <span>Total:</span>
-                <span>{`NPR ${parseInt(selectedRoute.price.split(' ')[1]) + 50}`}</span>
+                <span>{`NPR ${
+                  parseInt(selectedRoute.price.split(" ")[1]) + 50
+                }`}</span>
               </div>
             </div>
           </div>
