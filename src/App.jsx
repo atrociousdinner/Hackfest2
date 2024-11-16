@@ -13,7 +13,6 @@ const App = () => {
   const [showResults, setShowResults] = useState(false);
 
   const handleSearch = (params) => {
-    console.log('Search parameters:', params);
     setSearchParams(params);
     setShowResults(true);
   };
@@ -26,13 +25,14 @@ const App = () => {
 
   const MainLayout = () => {
     const location = useLocation();
+    const fromContribute = location.state?.fromContribute;
 
-    // Maintain `showResults` state when returning from the contribute page
     React.useEffect(() => {
-      if (location.state?.fromContribute) {
-        setShowResults(true);
+      if (fromContribute && location.state?.searchParams) {
+        setSearchParams(location.state.searchParams);
+        setShowResults(location.state.showResults ?? false);
       }
-    }, [location]);
+    }, [fromContribute, location.state]);
 
     return (
       <div className="relative min-h-screen">

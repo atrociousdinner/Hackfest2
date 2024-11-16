@@ -1,35 +1,42 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Users, User } from 'lucide-react';
+import { ArrowLeft, User } from 'lucide-react';
 
-const ContributePage = () => {
+const ContributePage = ({ searchParams, showResults }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  // const selectedRoute = location.state?.selectedRoute;
 
   const [formData, setFormData] = useState({
     busName: '',
     type: '',
     ticketCost: '',
     crowdness: '',
-    startPoint: '',
-    endPoint: ''
+    startPoint: searchParams?.from || '',
+    endPoint: searchParams?.to || ''
   });
 
   const handleBack = () => {
     navigate('/', { 
       state: { 
         fromContribute: true,
-        searchParams: location.state?.searchParams,
-        showResults: location.state?.showResults 
-      }
+        searchParams: searchParams,
+        showResults: showResults 
+      },
+      replace: true
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    navigate('/');
+    navigate('/', {
+      state: {
+        fromContribute: true,
+        searchParams: searchParams,
+        showResults: showResults
+      },
+      replace: true
+    });
   };
 
   const handleChange = (e) => {
@@ -79,15 +86,15 @@ const ContributePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-8">
-          <button
-            onClick={handleBack}
-            className="flex items-center text-gray-600 hover:text-gray-800 mb-4"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Search
-          </button>
+    <div className="max-w-2xl mx-auto">
+      <div className="mb-8">
+        <button
+          onClick={handleBack}
+          className="flex items-center text-gray-600 hover:text-gray-800 mb-4"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Search
+        </button>
           <h1 className="text-3xl font-bold text-gray-900">Share Your Experience</h1>
         </div>
 
