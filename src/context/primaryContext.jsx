@@ -220,6 +220,7 @@ export const MainContextProvider = (props) => {
       value={{
         markerState,
         setMarkerState,
+        busStops,
         source,
         setSource,
         destination,
@@ -235,6 +236,7 @@ export const MainContextProvider = (props) => {
         setPolyLine,
         markerPosition,
         setMarkerPosition,
+        setBusStops,
         setMajorCheckPoints,
         sendDataToServer,
       }}
