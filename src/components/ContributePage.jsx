@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, User } from 'lucide-react';
+import {User } from 'lucide-react';
 
-const ContributePage = ({ searchParams, showResults }) => {
+const ContributePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -160,7 +160,7 @@ const ContributePage = ({ searchParams, showResults }) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Crowdness
             </label>
-            <div className="flex space-x-4">
+            <div className="flex justify-evenly space-x-4">
               <CrowdIndicator
                 level="Low"
                 selected={formData.crowdness === 'low'}

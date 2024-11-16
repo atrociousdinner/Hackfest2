@@ -88,7 +88,7 @@ const BusRouteMap = () => {
 
   const customIcon1 = createCustomIcon1();
   const customIcon2 = createCustomIcon2();
-  const [locationName, setLocationName] = useState("");
+  const [setLocationName] = useState("");
 
   const [polyLine, setPolyLine] = useState([]);
   // const polyLine = [
