@@ -175,19 +175,12 @@ const Sidebar = () => {
       </div>
     </div>
 
-    {/* BusInfoPanel Section */}
-    <div className="mt-6">
+   
+  </div>
+ {/* BusInfoPanel Section */}
+ <div className="mt-6">
       <BusInfoPanel selectedRoute={selectedRoute} />
     </div>
-  </div>
-
-  {/* Main Content Section */}
-  <div className="flex-1 flex flex-col justify-between">
-    {/* Content Area */}
-    <div className="flex-1 p-8">
-      {/* Additional content (e.g., BusRouteMap) can go here */}
-    </div>
-  </div>
 </div>
 
   );

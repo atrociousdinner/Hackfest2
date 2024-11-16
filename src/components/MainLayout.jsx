@@ -31,7 +31,7 @@ const MainLayout = () => {
   return (
     <div>
       <div className="relative min-h-screen">
-        <div className="flex bg-gray-100 pb-24">
+        <div className="flex bg-gray-100">
           <Sidebar
             onSearch={handleSearch}
             searchParams={searchParams}
@@ -40,11 +40,6 @@ const MainLayout = () => {
           <MainContextProvider>
             <BusRouteMap />
           </MainContextProvider>
-          <div className="flex-1 p-8">
-            {showResults && (
-              <SearchResults routes={filteredRoutes} searchParams={searchParams} />
-            )}
-          </div>
         </div>
       </div>
     </div>
