@@ -175,12 +175,11 @@ const Sidebar = () => {
       </div>
     </div>
 
-   
-  </div>
- {/* BusInfoPanel Section */}
- <div className="mt-6">
+    {/* BusInfoPanel Section */}
+    <div className="mt-6">
       <BusInfoPanel selectedRoute={selectedRoute} />
     </div>
+  </div>
 </div>
 
   );
