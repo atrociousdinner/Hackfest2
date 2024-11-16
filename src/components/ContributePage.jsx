@@ -1,35 +1,42 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, User } from 'lucide-react';
 
-const ContributePage = () => {
+const ContributePage = ({ searchParams, showResults }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const selectedRoute = location.state?.selectedRoute;
+
+  const [formData, setFormData] = useState({
+    busName: '',
+    type: '',
+    ticketCost: '',
+    crowdness: '',
+    startPoint: searchParams?.from || '',
+    endPoint: searchParams?.to || ''
+  });
 
   const handleBack = () => {
-    // Navigate back with state to indicate we're coming from contribute page
     navigate('/', { 
       state: { 
         fromContribute: true,
-        searchParams,
-        showResults 
-      }
+        searchParams: searchParams,
+        showResults: showResults 
+      },
+      replace: true
     });
   };
-  
-  const [formData, setFormData] = useState({
-    crowdness: '',
-    actualFare: '',
-    additionalInfo: ''
-  });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
     console.log('Form submitted:', formData);
-    // Navigate back to main page
-    navigate('/');
+    navigate('/', {
+      state: {
+        fromContribute: true,
+        searchParams: searchParams,
+        showResults: showResults
+      },
+      replace: true
+    });
   };
 
   const handleChange = (e) => {
@@ -40,92 +47,172 @@ const ContributePage = () => {
     }));
   };
 
+  const busTypes = ['Local', 'Tourist', 'Deluxe', 'Semi-Deluxe'];
+
+  const CrowdIndicator = ({ level, selected, onClick, count }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`relative flex flex-col items-center p-4 border-2 rounded-xl transition-all duration-200 ${
+        selected 
+          ? 'border-blue-500 bg-blue-50 shadow-md' 
+          : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+      }`}
+    >
+      <div className="flex items-center justify-center h-12 mb-2">
+        {[...Array(count)].map((_, index) => (
+          <div
+            key={index}
+            className={`relative ${
+              index > 0 ? '-ml-3' : ''
+            }`}
+          >
+            <User
+              className={`w-6 h-6 ${
+                selected ? 'text-blue-600' : 'text-gray-600'
+              }`}
+              strokeWidth={2}
+            />
+          </div>
+        ))}
+      </div>
+      <span className={`text-sm font-medium ${
+        selected ? 'text-blue-600' : 'text-gray-600'
+      }`}>
+        {level}
+      </span>
+    </button>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
+    <div className="max-w-2xl mx-auto">
+      <div className="mb-8">
         <button
-            onClick={handleBack}  // Use handleBack instead of direct navigation
-            className="flex items-center text-gray-600 hover:text-gray-800 mb-4"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Search
-          </button>
-          <h1 className="text-3xl font-bold text-gray-900">Contribute Information</h1>
-          {selectedRoute && (
-            <p className="text-gray-600 mt-2">
-              Route: {selectedRoute.name || 'Selected Route'}
-            </p>
-          )}
+          onClick={handleBack}
+          className="flex items-center text-gray-600 hover:text-gray-800 mb-4"
+        >
+          <ArrowLeft className="w-5 h-5 mr-2" />
+          Back to Search
+        </button>
+          <h1 className="text-3xl font-bold text-gray-900">Share Your Experience</h1>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6">
-          <div className="space-y-6">
-            {/* Crowdness */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                How crowded was the bus?
-              </label>
-              <select
-                name="crowdness"
-                value={formData.crowdness}
+        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
+          {/* Bus Name */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Bus Name
+            </label>
+            <input
+              type="text"
+              name="busName"
+              value={formData.busName}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+              required
+            />
+          </div>
+
+          {/* Bus Type */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Type
+            </label>
+            <select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+              required
+            >
+              <option value="">Select bus type</option>
+              {busTypes.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Ticket Cost */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Ticket Cost
+            </label>
+            <div className="flex items-center">
+              <span className="text-gray-500 mr-2">NPR</span>
+              <input
+                type="number"
+                name="ticketCost"
+                value={formData.ticketCost}
                 onChange={handleChange}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
+                className="flex-1 border border-gray-300 rounded-md px-3 py-2"
+                placeholder="Enter ticket cost"
                 required
-              >
-                <option value="">Select crowdness level</option>
-                <option value="empty">Empty (0-20%)</option>
-                <option value="light">Light (20-40%)</option>
-                <option value="moderate">Moderate (40-60%)</option>
-                <option value="heavy">Heavy (60-80%)</option>
-                <option value="full">Full (80-100%)</option>
-              </select>
-            </div>
-
-            {/* Actual Fare */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                What was the actual fare?
-              </label>
-              <div className="flex items-center">
-                <span className="text-gray-500 mr-2">NPR</span>
-                <input
-                  type="number"
-                  name="actualFare"
-                  value={formData.actualFare}
-                  onChange={handleChange}
-                  className="flex-1 border border-gray-300 rounded-md px-3 py-2"
-                  placeholder="Enter actual fare"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Additional Information */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Additional Information
-              </label>
-              <textarea
-                name="additionalInfo"
-                value={formData.additionalInfo}
-                onChange={handleChange}
-                rows={4}
-                className="w-full border border-gray-300 rounded-md px-3 py-2"
-                placeholder="Share any additional information about your journey..."
               />
             </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium transition duration-200"
-            >
-              Submit Contribution
-            </button>
           </div>
+
+          {/* Crowdness */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Crowdness
+            </label>
+            <div className="flex space-x-4">
+              <CrowdIndicator
+                level="Low"
+                selected={formData.crowdness === 'low'}
+                onClick={() => setFormData(prev => ({ ...prev, crowdness: 'low' }))}
+                count={1}
+              />
+              <CrowdIndicator
+                level="Medium" 
+                selected={formData.crowdness === 'medium'}
+                onClick={() => setFormData(prev => ({ ...prev, crowdness: 'medium' }))}
+                count={2}
+              />
+              <CrowdIndicator
+                level="High"
+                selected={formData.crowdness === 'high'}
+                onClick={() => setFormData(prev => ({ ...prev, crowdness: 'high' }))}
+                count={3}
+              />
+            </div>
+          </div>
+
+          {/* Bus Route */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Bus Route
+            </label>
+            <div className="grid grid-cols-2 gap-4">
+              <input
+                type="text"
+                name="startPoint"
+                value={formData.startPoint}
+                onChange={handleChange}
+                className="border border-gray-300 rounded-md px-3 py-2"
+                placeholder="Start"
+                required
+              />
+              <input
+                type="text"
+                name="endPoint"
+                value={formData.endPoint}
+                onChange={handleChange}
+                className="border border-gray-300 rounded-md px-3 py-2"
+                placeholder="End"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium transition duration-200"
+          >
+            Submit Experience
+          </button>
         </form>
       </div>
     </div>
