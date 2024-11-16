@@ -1,77 +1,141 @@
-import React from 'react';
-import { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Sidebar from './components/Sidebar';
-import SearchResults from './components/SearchResults';
-import { busRoutes } from './data/busRoutes';
-import BusRouteMap from './components/BusRouteMap';
-import { MainContextProvider } from './context/primaryContext';
-import ContributePage from './components/ContributePage';
+import React, { useState } from "react";
+import { MapContainer, TileLayer } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
 const App = () => {
-  const [searchParams, setSearchParams] = useState({ from: '', to: '' });
-  const [showResults, setShowResults] = useState(false);
+  const [selectedBus, setSelectedBus] = useState(null);
 
-  const handleSearch = (params) => {
-    console.log('Search parameters:', params);
-    setSearchParams(params);
-    setShowResults(true);
-  };
-
-  const filteredRoutes = busRoutes.filter(
-    (route) =>
-      route.from.toLowerCase().includes(searchParams.from.toLowerCase()) &&
-      route.to.toLowerCase().includes(searchParams.to.toLowerCase())
-  );
-
-  const MainLayout = () => {
-    const location = useLocation();
-
-    // Maintain `showResults` state when returning from the contribute page
-    React.useEffect(() => {
-      if (location.state?.fromContribute) {
-        setShowResults(true);
-      }
-    }, [location]);
-
-    return (
-      <div className="relative min-h-screen">
-        <div className="flex bg-gray-100 pb-24">
-          <Sidebar
-            onSearch={handleSearch}
-            searchParams={searchParams}
-            setSearchParams={setSearchParams}
-          />
-          <MainContextProvider>
-            <BusRouteMap />
-          </MainContextProvider>
-          <div className="flex-1 p-8">
-            {showResults && (
-              <SearchResults routes={filteredRoutes} searchParams={searchParams} />
-            )}
-          </div>
-        </div>
-        {showResults && <BottomFeatures />}
-      </div>
-    );
-  };
+  // Dummy bus data
+  const busRoutes = [
+    {
+      id: 1,
+      name: "Tourist Bus Seva",
+      price: 800,
+      departure: "9:00 AM",
+      duration: "7 hours",
+      facilities: ["AC", "WiFi", "Water"],
+      serviceCharge: 50,
+      crowdedness: 30,
+    },
+    {
+      id: 2,
+      name: "Deluxe Night Bus",
+      price: 1200,
+      departure: "10:00 PM",
+      duration: "6 hours",
+      facilities: ["AC", "WiFi", "Snacks"],
+      serviceCharge: 70,
+      crowdedness: 50,
+    },
+  ];
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />} />
-        <Route
-          path="/contribute"
-          element={
-            <ContributePage
-              searchParams={searchParams}
-              showResults={showResults}
+    <div className="h-screen flex">
+      {/* Sidebar */}
+      <div className="w-1/3 bg-gray-100 p-4 flex flex-col border-r border-gray-300">
+        <h1 className="text-xl font-bold text-blue-600 mb-6">Nepal Travel Guide</h1>
+        {/* Input Section */}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">From:</label>
+            <input
+              type="text"
+              placeholder="Kathmandu"
+              className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
-          }
-        />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">To:</label>
+            <input
+              type="text"
+              placeholder="Pokhara"
+              className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+          <button className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+            Search Routes
+          </button>
+        </div>
+
+        {/* Routes Section */}
+        <div className="mt-6 space-y-4">
+          {busRoutes.map((bus) => (
+            <div
+              key={bus.id}
+              className={`p-4 bg-white shadow rounded-md cursor-pointer ${
+                selectedBus?.id === bus.id ? "ring-2 ring-blue-500" : ""
+              }`}
+              onClick={() => setSelectedBus(bus)}
+            >
+              <h2 className="text-lg font-bold">{bus.name}</h2>
+              <p className="text-sm text-gray-600">NPR {bus.price}</p>
+              <p className="text-sm">Departure Time: {bus.departure}</p>
+              <p className="text-sm">Duration: {bus.duration}</p>
+              <div className="mt-2 flex space-x-2">
+                {bus.facilities.map((facility, index) => (
+                  <span
+                    key={index}
+                    className="px-2 py-1 text-xs bg-blue-100 text-blue-600 rounded"
+                  >
+                    {facility}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="flex-grow flex flex-col">
+        {/* Map */}
+        <div className="flex-grow">
+          <MapContainer
+            center={[27.7172, 85.324]}
+            zoom={10}
+            className="h-full w-full"
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution="&copy; OpenStreetMap contributors"
+            />
+          </MapContainer>
+        </div>
+
+        {/* Bottom Panel (Conditional Rendering) */}
+        {selectedBus && (
+          <div className="w-full p-4 bg-gray-50 border-t border-gray-300 flex justify-between items-center">
+            {/* Crowdedness */}
+            <div className="flex items-center space-x-4">
+              <label className="text-sm font-medium">Crowdedness:</label>
+              <div className="relative w-40 bg-gray-200 rounded-full h-4">
+                <div
+                  className="absolute top-0 left-0 h-full bg-green-500 rounded-full"
+                  style={{ width: `${selectedBus.crowdedness}%` }}
+                ></div>
+              </div>
+              <span className="text-sm font-medium text-gray-600">
+                {selectedBus.crowdedness}% Full
+              </span>
+            </div>
+
+            {/* Fare */}
+            <div className="text-right">
+              <p className="text-sm">
+                Base Fare: <span className="font-medium">NPR {selectedBus.price}</span>
+              </p>
+              <p className="text-sm">
+                Service Charge:{" "}
+                <span className="font-medium">NPR {selectedBus.serviceCharge}</span>
+              </p>
+              <p className="text-lg font-bold">
+                Total: NPR {selectedBus.price + selectedBus.serviceCharge}
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
