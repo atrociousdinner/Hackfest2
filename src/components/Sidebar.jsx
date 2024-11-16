@@ -71,7 +71,7 @@ const Sidebar = () => {
   return (
     <div className="flex min-h-screen bg-gray-100">
   {/* Sidebar and BusInfoPanel Container */}
-  <div className="flex flex-col w-96 bg-white shadow-lg p-6">
+  <div className="flex flex-col w-80 z-20 bg-white shadow-lg p-6">
     {/* Sidebar Section */}
     <div className="flex-1 overflow-y-auto">
       {/* Header */}
@@ -175,11 +175,11 @@ const Sidebar = () => {
       </div>
     </div>
 
+  </div>
     {/* BusInfoPanel Section */}
     <div className="mt-6">
       <BusInfoPanel selectedRoute={selectedRoute} />
     </div>
-  </div>
 
 
 </div>

@@ -209,15 +209,7 @@ const BusRouteMap = () => {
   ];
 
   return (
-    <div style={{ height: "600px", width: "100%" }}>
-      <div>
-        <button onClick={() => setMarkerState("normal")}>a</button>
-        <button onClick={() => setMarkerState("busStop")}>b</button>
-        <button onClick={() => setMarkerState("majorCheckPoint")}>c</button>
-      </div>
-      <div>
-        <button onClick={sendDataToServer}>click gar</button>
-      </div>
+    <div style={{ height: "80%", width: "100%" }} className="fixed"> 
       <MapContainer
         center={getPosition()}
         zoom={13}

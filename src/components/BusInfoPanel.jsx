@@ -6,9 +6,8 @@ const BusInfoPanel = ({ selectedRoute }) => {
 
   if (!selectedRoute) return null;
 
-
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-6">
+    <div className="fixed bottom-0 z-10 left-[321px] right-0 bg-white shadow-lg border-t border-gray-200 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center gap-8">
           {/* Crowdness Section */}
@@ -43,8 +42,6 @@ const BusInfoPanel = ({ selectedRoute }) => {
               </div>
             </div>
           </div>
-
-          
         </div>
       </div>
     </div>

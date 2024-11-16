@@ -39,7 +39,7 @@ const MainLayout = () => {
   return (
     <div className="relative flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="flex-none w-96 bg-white shadow-lg overflow-y-auto h-screen">
+      <div className="flex-none w-80 bg-white shadow-lg overflow-y-auto h-screen">
         <Sidebar
           onSearch={handleSearch}
           searchParams={searchParams}
@@ -51,7 +51,7 @@ const MainLayout = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col relative">
         <MainContextProvider>
-          <div className="flex-1 p-4">
+          <div className="flex-1 ">
             <BusRouteMap />
           </div>
         </MainContextProvider>
