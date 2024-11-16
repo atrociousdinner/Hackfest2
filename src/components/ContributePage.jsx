@@ -98,7 +98,7 @@ const ContributePage = ({ searchParams, showResults }) => {
   };
   return (
     <div className="min-h-screen max-h-screen overflow-hidden bg-gray-50 p-6 flex gap-3">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto overflow-y-scroll overflow-x-hidden">
         {/* Back Button */}
         <div className="flex gap-4 items-center mb-6 cursor-pointer" onClick={handleHomeClick}>
           <img
