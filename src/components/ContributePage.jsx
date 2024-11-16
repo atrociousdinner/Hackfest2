@@ -37,7 +37,7 @@ const ContributePage = ({ searchParams, showResults }) => {
     }));
   };
 
-  const busTypes = ['Local', 'Tourist', 'Deluxe', 'Semi-Deluxe'];
+  const busTypes = ['Bus', 'Micro', 'Tempo', 'Other'];
 
   const CrowdIndicator = ({ level, selected, onClick, count }) => (
     <button
