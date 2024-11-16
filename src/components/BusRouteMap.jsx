@@ -14,6 +14,7 @@ import {
 import "leaflet/dist/leaflet.css";
 import L, { marker } from "leaflet";
 import { MainContext } from "../context/primaryContext";
+import { MapPin, Bus, Flag, Undo2 } from "lucide-react";
 
 // Fix for default markers not showing
 delete L.Icon.Default.prototype._getIconUrl;
@@ -78,19 +79,33 @@ const getPosition = () => {
 };
 
 const BusRouteMap = () => {
-  const [markerPosition, setMarkerPosition] = useState([]);
-  const { markerState, setMarkerState } = useContext(MainContext);
+  // const [markerPosition, setMarkerPosition] = useState([]);
+  const {
+    markerState,
+    setMarkerState,
+    busStops,
+    setBusStops,
+    majorCheckPoints,
+    setMajorCheckPoints,
+    polyLine,
+    setPolyLine,
+    markerPosition,
+    setMarkerPosition,
+    sendDataToServer,
+  } = useContext(MainContext);
 
-  const [busStops, setBusStops] = useState([]);
-  const [majorCheckPoints, setMajorCheckPoints] = useState([]);
+  // const [busStops, setBusStops] = useState([]);
+  // const [majorCheckPoints, setMajorCheckPoints] = useState([]);
+
+  // const [polyLine, setPolyLine] = useState([]);
 
   console.log(markerState);
 
   const customIcon1 = createCustomIcon1();
   const customIcon2 = createCustomIcon2();
-  const [locationName, setLocationName] = useState("");
 
-  const [polyLine, setPolyLine] = useState([]);
+  // const [locationName, setLocationName] = useState("");
+
   // const polyLine = [
   //   {
   //     id: 123,
@@ -103,26 +118,6 @@ const BusRouteMap = () => {
   // ];
   // This component handles map events
 
-  const sendDataToServer = async (data) => {
-
-    try {
-      const response = await fetch("http://localhost:3000/addroute", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ markerPosition, polyLines: polyLine }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to send data to the server");
-      }
-      console.log("Data sent successfully:", data);
-    } catch (error) {
-      console.error("Error sending data to the server:", error);
-    }
-  };
-
   const fetchLocationName = async (lat, lon) => {
     try {
       const response = await fetch(
@@ -131,19 +126,104 @@ const BusRouteMap = () => {
       const data = await response.json();
       const placeName = data.display_name.split(",").slice(0, 3).join(",");
       setLocationName(data.display_name || "Location not found");
+      const round_lat = Math.round(lat * 1000) / 1000;
+      const round_lng = Math.round(lon * 1000) / 1000;
       setMarkerPosition((prev) => [
         ...prev,
-        { type: markerState, lt: lat, ln: lon, namee: placeName },
+        { type: markerState, lt: round_lat, ln: round_lng, namee: placeName },
       ]);
-      setMajorCheckPoints((prev) => [
-        ...prev,
-        { lt: lat, ln: lon, namee: placeName },
-      ]);
+      // setMajorCheckPoints((prev) => [
+      //   ...prev,
+      //   { lt: lat, ln: lon, namee: placeName },
+      // ]);
+
+      checkAndAddCheckPoint({ lt: round_lat, ln: round_lng, namee: placeName });
       console.log(placeName, lat, lon);
       console.log(majorCheckPoints);
     } catch (error) {
       console.error("Error fetching location name:", error);
       setLocationName("Error fetching location");
+    }
+  };
+
+  const checkAndAddCheckPoint = async (newCheckPoint) => {
+    try {
+      // Check if the checkpoint already exists in the database
+      const response = await fetch("http://localhost:3000/checkcheckpoint", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newCheckPoint),
+      });
+
+      const result = await response.json();
+
+      if (!result.exists) {
+        // Add the new checkpoint to the database if it doesn't exist
+        const addResponse = await fetch("http://localhost:3000/addcheckpoint", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newCheckPoint),
+        });
+
+        if (!addResponse.ok) {
+          throw new Error("Failed to add checkpoint to the database");
+        }
+
+        console.log("Checkpoint added successfully:", newCheckPoint);
+
+        // Update the local state only if the addition is successful
+        setMajorCheckPoints((prev) => [...prev, newCheckPoint]);
+      } else {
+        console.log(
+          "Checkpoint already exists in the database:",
+          newCheckPoint
+        );
+      }
+    } catch (error) {
+      console.error("Error checking/adding checkpoint:", error);
+    }
+  };
+
+  const checkAndAddBusStop = async (newStop) => {
+    try {
+      // Check if the bus stop already exists in the database
+      const response = await fetch("http://localhost:3000/checkbusstop", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newStop),
+      });
+
+      const result = await response.json();
+
+      if (!result.exists) {
+        // Add the new bus stop to the database if it doesn't exist
+        const addResponse = await fetch("http://localhost:3000/addbusstop", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newStop),
+        });
+
+        if (!addResponse.ok) {
+          throw new Error("Failed to add bus stop to the database");
+        }
+
+        console.log("Bus stop added successfully:", newStop);
+
+        // Update the local state only if the addition is successful
+        setBusStops((prev) => [...prev, newStop]);
+      } else {
+        console.log("Bus stop already exists in the database:", newStop);
+      }
+    } catch (error) {
+      console.error("Error checking/adding bus stop:", error);
     }
   };
 
@@ -156,7 +236,7 @@ const BusRouteMap = () => {
 
         if (markerState === "majorCheckPoint") {
           fetchLocationName(lat, lng);
-        } else {
+        } else if (markerState === "normal") {
           setMarkerPosition((prev) => [
             ...prev,
             { type: markerState, lt: lat, ln: lng },
@@ -164,7 +244,25 @@ const BusRouteMap = () => {
         }
 
         if (markerState === "busStop") {
-          setBusStops((prev) => [...prev, { lt: lat, ln: lng }]);
+          const round_lat = Math.round(lat * 1000) / 1000;
+          const round_lng = Math.round(lng * 1000) / 1000;
+
+          const newStop = { lt: round_lat, ln: round_lng };
+
+          setMarkerPosition((prev) => [
+            ...prev,
+            { type: markerState, lt: round_lat, ln: round_lng },
+          ]);
+
+          // Check and add the bus stop to the database and state
+          checkAndAddBusStop(newStop);
+
+          // setBusStops((prev) => {
+          //   const newStop = { lt: round_lat, ln: round_lng };
+          //   const uniqueStops = new Set(prev.map((stop) => JSON.stringify(stop)));
+          //   uniqueStops.add(JSON.stringify(newStop));
+          //   return Array.from(uniqueStops).map((stop) => JSON.parse(stop));
+          // });
         }
 
         console.log(markerPosition);
@@ -174,42 +272,80 @@ const BusRouteMap = () => {
     return null;
   };
 
-  // Sample bus route data - replace with your actual data
-  const busRoutes = [
-    {
-      id: 1,
-      name: "Route 1",
-      color: "#FF0000",
-      stops: [
-        { name: "Stop A", position: [51.505, -0.09] },
-        { name: "Stop B", position: [51.51, -0.1] },
-        { name: "Stop C", position: [51.515, -0.09] },
-      ],
-      path: [
-        [51.505, -0.09],
-        [51.51, -0.1],
-        [51.515, -0.09],
-      ],
-    },
-    {
-      id: 2,
-      name: "Route 2",
-      color: "#0000FF",
-      stops: [
-        { name: "Stop D", position: [51.505, -0.08] },
-        { name: "Stop E", position: [51.51, -0.085] },
-        { name: "Stop F", position: [51.515, -0.082] },
-      ],
-      path: [
-        [51.505, -0.08],
-        [51.51, -0.085],
-        [51.515, -0.082],
-      ],
-    },
-  ];
+  const undoMark = async () => {
+    try {
+      if (markerState === "busStop" && markerPosition.length > 0) {
+        // Get the last bus stop added
+        const lastMarker = markerPosition[markerPosition.length - 1];
+
+        // Check if it is a bus stop
+        if (lastMarker.type === "busStop") {
+          // Make API call to delete the bus stop from the database
+          const response = await fetch("http://localhost:3000/deletebus", {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              lt: Math.round(lastMarker.lt * 1000) / 1000,
+              ln: Math.round(lastMarker.ln * 1000) / 1000,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to delete the bus stop from the database");
+          }
+
+          console.log("Bus stop deleted successfully:", lastMarker);
+        }
+      }
+
+      // Remove the last marker from markerPosition
+      markerPosition.pop();
+      polyLine.pop();
+
+      console.log("Updated marker positions:", markerPosition);
+    } catch (error) {
+      console.error("Error undoing marker:", error);
+    }
+  };
 
   return (
-    <div style={{ height: "100%", width: "100%" }} className="fixed"> 
+    <div style={{ height: "85vh", width: "100%" }}>
+      <div className="flex gap-2 p-2">
+        <button
+          onClick={() => setMarkerState("normal")}
+          className="flex items-center gap-2 px-3 py-2 bg-white border rounded-md hover:bg-gray-50 shadow-sm"
+        >
+          <MapPin className="w-4 h-4" />
+          <span>Normal</span>
+        </button>
+
+        <button
+          onClick={() => setMarkerState("busStop")}
+          className="flex items-center gap-2 px-3 py-2 bg-white border rounded-md hover:bg-gray-50 shadow-sm"
+        >
+          <Bus className="w-4 h-4" />
+          <span>Bus Stop</span>
+        </button>
+
+        <button
+          onClick={() => setMarkerState("majorCheckPoint")}
+          className="flex items-center gap-2 px-3 py-2 bg-white border rounded-md hover:bg-gray-50 shadow-sm"
+        >
+          <Flag className="w-4 h-4" />
+          <span>Major Checkpoint</span>
+        </button>
+
+        <button
+          onClick={undoMark}
+          className="flex items-center gap-2 px-3 py-2 bg-white border rounded-md hover:bg-gray-50 shadow-sm"
+        >
+          <Undo2 className="w-4 h-4" />
+          <span>Undo</span>
+        </button>
+      </div>
+
       <MapContainer
         center={getPosition()}
         zoom={13}
@@ -250,29 +386,6 @@ const BusRouteMap = () => {
             </Polyline>
           </React.Fragment>
         )}
-
-        {busRoutes.map((route) => (
-          <React.Fragment key={route.id}>
-            {/* Draw the route line */}
-            <Polyline positions={route.path} color={route.color} weight={3}>
-              <Popup>{route.name}</Popup>
-            </Polyline>
-
-            {/* Add markers for bus stops */}
-            {route.stops.map((stop, index) => (
-              <Marker
-                key={`${route.id}-stop-${index}`}
-                position={stop.position}
-              >
-                <Popup>
-                  {stop.name}
-                  <br />
-                  {route.name}
-                </Popup>
-              </Marker>
-            ))}
-          </React.Fragment>
-        ))}
       </MapContainer>
     </div>
   );
