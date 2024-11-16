@@ -209,7 +209,7 @@ const BusRouteMap = () => {
   ];
 
   return (
-    <div style={{ height: "80%", width: "100%" }} className="fixed"> 
+    <div style={{ height: "100%", width: "100%" }} className="fixed"> 
       <MapContainer
         center={getPosition()}
         zoom={13}
