@@ -14,7 +14,6 @@ const MainLayout = () => {
   const [selectedRoute, setSelectedRoute] = useState(null);
 
   const handleSearch = (params) => {
-    console.log('Search parameters:', params);
     setSearchParams(params);
     setShowResults(true);
   };
@@ -31,7 +30,6 @@ const MainLayout = () => {
 
   const location = useLocation();
 
-  // Maintain `showResults` state when returning from the contribute page
   useEffect(() => {
     if (location.state?.fromContribute) {
       setShowResults(true);
@@ -41,7 +39,7 @@ const MainLayout = () => {
   return (
     <div className="relative flex min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <div className="flex-none w-80 bg-white shadow-lg overflow-y-auto h-screen">
+      <div className="flex-none w-96 bg-white shadow-lg overflow-y-auto h-screen">
         <Sidebar
           onSearch={handleSearch}
           searchParams={searchParams}
@@ -50,7 +48,7 @@ const MainLayout = () => {
         />
       </div>
 
-      {/* Main content */}
+      {/* Main Content */}
       <div className="flex-1 flex flex-col relative">
         <MainContextProvider>
           <div className="flex-1 p-4">
@@ -71,7 +69,7 @@ const MainLayout = () => {
 
       {/* Bus Info Panel */}
       {selectedRoute && (
-        <div className="absolute left-[320px] bottom-0 w-80 bg-white shadow-lg border-t border-gray-200">
+        <div className="absolute left-64 top-0 w-80 bg-white shadow-lg border-l border-gray-200 h-screen overflow-y-auto">
           <BusInfoPanel selectedRoute={selectedRoute} />
         </div>
       )}
