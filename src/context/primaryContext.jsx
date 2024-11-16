@@ -235,7 +235,8 @@ export const MainContextProvider = (props) => {
         setPolyLine,
         markerPosition,
         setMarkerPosition,
-        sendDataToServer
+        setMajorCheckPoints,
+        sendDataToServer,
       }}
     >
       {props.children}

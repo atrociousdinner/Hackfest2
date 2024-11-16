@@ -92,7 +92,7 @@ const BusRouteMap = () => {
     markerPosition,
     setMarkerPosition,
     sendDataToServer,
-    setLocationName
+    
   } = useContext(MainContext);
 
   // const [busStops, setBusStops] = useState([]);
@@ -105,7 +105,7 @@ const BusRouteMap = () => {
   const customIcon1 = createCustomIcon1();
   const customIcon2 = createCustomIcon2();
 
-  // const [locationName, setLocationName] = useState("");
+  const [locationName, setLocationName] = useState("");
 
   // const polyLine = [
   //   {
