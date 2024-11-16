@@ -92,6 +92,7 @@ const BusRouteMap = () => {
     markerPosition,
     setMarkerPosition,
     sendDataToServer,
+    setLocationName
   } = useContext(MainContext);
 
   // const [busStops, setBusStops] = useState([]);
