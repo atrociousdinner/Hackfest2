@@ -1,20 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom'; // Add this import
+import busRoutes from '../assets/data/busRoutes';
+
 
 const BusInfoPanel = ({ selectedRoute }) => {
   const navigate = useNavigate(); // Add this hook
-
+  console.log(selectedRoute)
   if (!selectedRoute) return null;
 
-  // Add this handler function
-  const handleContributeClick = () => {
-    navigate('/contribute', { 
-      state: { selectedRoute } // Pass the selectedRoute as state
-    });
-  };
-
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-6">
+    <div className="fixed bottom-0 z-10 left-[321px] right-0 bg-white shadow-lg border-t border-gray-200 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center gap-8">
           {/* Crowdness Section */}
@@ -22,12 +17,18 @@ const BusInfoPanel = ({ selectedRoute }) => {
             <h3 className="text-lg font-semibold mb-2">Crowdness</h3>
             <div className="flex items-center gap-2">
               <div className="h-2 bg-gray-200 rounded-full flex-1">
-                <div 
-                  className="h-full bg-green-500 rounded-full" 
-                  style={{ width: '30%' }}
-                />
+              <div 
+                className={`h-full rounded-full ${
+                  selectedRoute.crowdness === "Low" 
+                    ? "bg-green-500" 
+                    : selectedRoute.crowdness === "Medium" 
+                    ? "bg-yellow-500" 
+                    : "bg-red-500"
+                }`} 
+                style={{ width: selectedRoute.crowdness === "Low" ? '30%' : selectedRoute.crowdness === "Medium" ? '60%' : '100%' }}
+              />
               </div>
-              <span className="text-sm text-gray-600">30% Full</span>
+              <span className="text-sm text-gray-600">{selectedRoute.crowdness}</span>
             </div>
           </div>
 
@@ -48,16 +49,6 @@ const BusInfoPanel = ({ selectedRoute }) => {
                 <span>{`NPR ${parseInt(selectedRoute.price.split(' ')[1]) + 50}`}</span>
               </div>
             </div>
-          </div>
-
-          {/* Contribute Button - Updated with onClick handler */}
-          <div className="flex-1 flex justify-end">
-            <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium transition duration-200"
-              onClick={handleContributeClick} // Add the click handler here
-            >
-              Contribute Information
-            </button>
           </div>
         </div>
       </div>

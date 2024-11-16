@@ -6,25 +6,15 @@ const ContributePage = ({ searchParams, showResults }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Pre-fill formData based on passed props or default to empty
   const [formData, setFormData] = useState({
     busName: '',
     type: '',
     ticketCost: '',
     crowdness: '',
-    startPoint: searchParams?.from || '',
-    endPoint: searchParams?.to || ''
+    startPoint: location.state?.searchParams?.from || '',
+    endPoint: location.state?.searchParams?.to || '',
   });
-
-  const handleBack = () => {
-    navigate('/', { 
-      state: { 
-        fromContribute: true,
-        searchParams: searchParams,
-        showResults: showResults 
-      },
-      replace: true
-    });
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -32,18 +22,18 @@ const ContributePage = ({ searchParams, showResults }) => {
     navigate('/', {
       state: {
         fromContribute: true,
-        searchParams: searchParams,
-        showResults: showResults
+        searchParams: location.state?.searchParams,
+        showResults: location.state?.showResults,
       },
-      replace: true
+      replace: true,
     });
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -54,8 +44,8 @@ const ContributePage = ({ searchParams, showResults }) => {
       type="button"
       onClick={onClick}
       className={`relative flex flex-col items-center p-4 border-2 rounded-xl transition-all duration-200 ${
-        selected 
-          ? 'border-blue-500 bg-blue-50 shadow-md' 
+        selected
+          ? 'border-blue-500 bg-blue-50 shadow-md'
           : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
       }`}
     >
@@ -76,29 +66,40 @@ const ContributePage = ({ searchParams, showResults }) => {
           </div>
         ))}
       </div>
-      <span className={`text-sm font-medium ${
-        selected ? 'text-blue-600' : 'text-gray-600'
-      }`}>
+      <span
+        className={`text-sm font-medium ${
+          selected ? 'text-blue-600' : 'text-gray-600'
+        }`}
+      >
         {level}
       </span>
     </button>
   );
 
+  const handleBack = () => {
+    navigate('/', {
+      state: {
+        fromContribute: true,
+        searchParams: location.state?.searchParams,
+        showResults: location.state?.showResults,
+      },
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-    <div className="max-w-2xl mx-auto">
-      <div className="mb-8">
-        <button
-          onClick={handleBack}
-          className="flex items-center text-gray-600 hover:text-gray-800 mb-4"
-        >
-          <ArrowLeft className="w-5 h-5 mr-2" />
-          Back to Search
-        </button>
+      <div className="max-w-2xl mx-auto">
+        {/* Back Button */}
+        
+
+        <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Share Your Experience</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-6 space-y-6">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-lg shadow-md p-6 space-y-6"
+        >
           {/* Bus Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -127,8 +128,10 @@ const ContributePage = ({ searchParams, showResults }) => {
               required
             >
               <option value="">Select bus type</option>
-              {busTypes.map(type => (
-                <option key={type} value={type}>{type}</option>
+              {busTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
               ))}
             </select>
           </div>
@@ -161,19 +164,25 @@ const ContributePage = ({ searchParams, showResults }) => {
               <CrowdIndicator
                 level="Low"
                 selected={formData.crowdness === 'low'}
-                onClick={() => setFormData(prev => ({ ...prev, crowdness: 'low' }))}
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, crowdness: 'low' }))
+                }
                 count={1}
               />
               <CrowdIndicator
-                level="Medium" 
+                level="Medium"
                 selected={formData.crowdness === 'medium'}
-                onClick={() => setFormData(prev => ({ ...prev, crowdness: 'medium' }))}
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, crowdness: 'medium' }))
+                }
                 count={2}
               />
               <CrowdIndicator
                 level="High"
                 selected={formData.crowdness === 'high'}
-                onClick={() => setFormData(prev => ({ ...prev, crowdness: 'high' }))}
+                onClick={() =>
+                  setFormData((prev) => ({ ...prev, crowdness: 'high' }))
+                }
                 count={3}
               />
             </div>
