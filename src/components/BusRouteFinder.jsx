@@ -224,7 +224,7 @@ const BusRouteFinder = () => {
   } = useContext(MainContext);
 
   return (
-    <div style={{ height: "600px", width: "100%", zIndex: "0" }}>
+    <div style={{ height: "100%", width: "100%", zIndex: "0" }}>
       <MapContainer
         center={getPosition()}
         zoom={13}
